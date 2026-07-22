@@ -1,0 +1,44 @@
+#qdrant数据,MySQL数据,Redis 数据
+docker/data/
+docker/redis_data/
+
+# 嵌入模型文件（通常很大，从 HuggingFace 下载）
+docker/embedding/
+docker/elasticsearch/
+
+# 头像图片
+static/avatar/
+
+# 数据库相关
+*.sock
+*.pid
+*.aof
+*.manifest
+
+# 环境变量
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+env/
+
+# Node.js
+node_modules/
+npm-debug.log
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# 日志
+*.log
+logs/
+
+# 系统文件
+.DS_Store
+Thumbs.db

@@ -1,0 +1,64 @@
+logging:
+  file:
+    enable: true
+    level: INFO
+    path: logs
+    rotation: "10 MB"
+    retention: "7 days"
+  console:
+    enable: true
+    level: INFO
+    
+llm:
+  model_name: qwen3.7-max
+  api_key: ${oc.env:DASHSCOPE_API_KEY}
+  base_url: https://llm-r5cgemvv3m2xeq0c.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
+  
+embedding:
+  host: localhost
+  port: 8081
+  model: BAAI/bge-large-zh-v1.5
+
+qdrant:
+  host: localhost
+  port: 6333
+  embedding_size: 1024
+
+es:
+  host: localhost
+  port: 9200
+  index_name: data_agent
+
+redis:
+  host: localhost
+  port: 6379
+  db: 0
+  password: 123456
+  # 会话过期时间（秒）
+  expire: 3600
+  # key前缀
+  prefix: agent:conversation
+
+dw_db:
+  host: localhost
+  port: 3306
+  user: yt123456
+  password: yt123456
+  database: app_dw
+
+meta_db:
+  host: localhost
+  port: 3306
+  user: yt123456
+  password: yt123456
+  database: app_meta
+
+user_db:
+  host: localhost
+  port: 3306
+  user: yt123456
+  password: yt123456
+  database: app_user
+
+
+

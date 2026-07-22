@@ -1,0 +1,56 @@
+"""
+日志初始化
+
+集中管理项目的日志输出行为，包括统一日志格式 注入 request_id 以及按配置输出到控制台和文件
+业务代码只需要导入这里的 logger，就可以使用同一套日志能力"""
+
+import sys
+from pathlib import Path
+
+from loguru import logger
+
+from app.config.app_config import appconfig
+from app.common.context import request_id_ctx_var
+
+# 日志格式统一展示时间、级别、request_id 和调用位置，便于排查链路问题
+log_format = (
+    "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
+    "<level>{level: <8}</level> | "
+    "<magenta>request_id - {extra[request_id]}</magenta> | "
+    "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
+    "<level>{message}</level>"
+)
+
+
+def inject_request_id(record):
+    """把上下文中的 request_id 注入到每条日志的 extra 字段"""
+    request_id = request_id_ctx_var.get()
+    record["extra"]["request_id"] = request_id
+
+
+# 移除 Loguru 默认的输出目标，避免和项目自定义配置重复打印
+logger.remove()
+
+# 生成带 request_id 注入能力的 logger，后续业务代码统一使用这个实例
+logger = logger.patch(inject_request_id)
+
+# 根据配置决定是否输出控制台日志，适合本地开发和容器标准输出采集
+if appconfig.logging.console.enable:
+    logger.add(
+        sink=sys.stdout,
+        level=appconfig.logging.console.level,
+        format=log_format,
+    )
+
+# 根据配置决定是否写入文件日志，并在启动时确保日志目录存在
+if appconfig.logging.file.enable:
+    path = Path(appconfig.logging.file.path)
+    path.mkdir(parents=True, exist_ok=True)
+    logger.add(
+        sink=path / "app.log",
+        level=appconfig.logging.file.level,
+        format=log_format,
+        rotation=appconfig.logging.file.rotation,
+        retention=appconfig.logging.file.retention,
+        encoding="utf-8",
+    )

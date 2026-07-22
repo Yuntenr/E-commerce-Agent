@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #f7f1e8;
+  overflow: hidden;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(47, 107, 79, 0.2);
+}
+
+.grain {
+  opacity: 0.32;
+  background-image: radial-gradient(circle at 1px 1px,
+      rgba(32, 32, 29, 0.18) 1px,
+      transparent 0);
+  background-size: 18px 18px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent 72%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@theme {
+
+  --color-ink: #20201d;
+  --color-paper: #faf8f3;
+  --color-primary: #2563eb;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-soot: "#2d2925";
+  --color-moss: "#2f6b4f";
+  --color-brass: "#b48638";
+  
+  --shadow-line: 0 1px 0 rgb(32 32 29 / 8%);
+  --shadow-panel: 0 24px 70px rgb(45 41 37 / 16%);
+
+}

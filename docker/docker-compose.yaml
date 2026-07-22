@@ -1,0 +1,82 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=yt123456
+      - MYSQL_USER=yt123456
+      - MYSQL_PASSWORD=yt123456
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/mysql_data:/var/lib/mysql                   # 数据持久化
+      - ./mysql:/docker-entrypoint-initdb.d      # 自动执行mysql文件夹初始化 SQL
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant-container
+    restart: unless-stopped
+    ports:
+      - "6333:6333"  # HTTP API（主要使用）
+      - "6334:6334"  # gRPC API（高性能场景）
+    volumes:
+      - ./data/qdrant_data:/qdrant/storage
+
+  elasticsearch:
+    build: ./elasticsearch
+    container_name: elasticsearch-container
+    restart: unless-stopped
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+  kibana:
+    image: kibana:8.19.18
+    container_name: kibana
+    restart: unless-stopped
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  embedding:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9
+    platform: linux/amd64
+    container_name: embedding-container
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      MODEL_ID: /models/bge-large-zh-v1.5
+      MAX_CONCURRENT_REQUESTS: "16"
+      MAX_BATCH_TOKENS: "16384"
+    volumes:
+      - ./embedding/bge-large-zh-v1.5:/models/bge-large-zh-v1.5
+
+  redis:
+    image: redis:7.4
+    container_name: redis-container
+    restart: unless-stopped
+    ports:
+    - "6379:6379"
+    volumes:
+    - ./data/redis_data:/data
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --requirepass
+      - "123456"
+volumes:
+  mysql_data:
+  qdrant_data:
+  es_data:
